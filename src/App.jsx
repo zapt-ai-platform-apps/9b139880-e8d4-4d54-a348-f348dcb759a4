@@ -24,20 +24,20 @@ function App() {
   onMount(checkUserSignedIn);
 
   createEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_, session) => {
-        if (session?.user) {
-          setUser(session.user);
-          setCurrentPage('homePage');
-        } else {
-          setUser(null);
-          setCurrentPage('login');
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        setCurrentPage('homePage');
+      } else {
+        setUser(null);
+        setCurrentPage('login');
       }
-    );
+    });
 
     return () => {
-      authListener.unsubscribe();
+      subscription.unsubscribe();
     };
   });
 
@@ -89,11 +89,11 @@ function App() {
   };
 
   return (
-    <div class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 p-4">
+    <div class="h-full bg-gradient-to-br from-gray-100 to-gray-200 p-4 text-gray-800">
       <Show
         when={currentPage() === 'homePage'}
         fallback={
-          <div class="flex items-center justify-center min-h-screen">
+          <div class="flex items-center justify-center h-full">
             <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-lg">
               <h2 class="text-3xl font-bold mb-6 text-center text-blue-600">
                 تسجيل الدخول باستخدام ZAPT
@@ -118,7 +118,7 @@ function App() {
           </div>
         }
       >
-        <div class="max-w-3xl mx-auto">
+        <div class="max-w-3xl mx-auto h-full flex flex-col">
           <div class="flex justify-between items-center mb-8">
             <h1 class="text-4xl font-bold text-blue-600">مساعد الكفيف</h1>
             <button
@@ -129,16 +129,16 @@ function App() {
             </button>
           </div>
 
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="bg-white p-6 rounded-lg shadow-md flex-1 flex flex-col">
             <h2 class="text-2xl font-bold mb-4 text-blue-600">إدخال النص</h2>
             <textarea
               placeholder="اكتب النص هنا..."
               value={textInput()}
               onInput={(e) => setTextInput(e.target.value)}
-              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent box-border mb-4"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent box-border mb-4 flex-1 resize-none"
               rows="5"
             ></textarea>
-            <div class="flex space-x-4">
+            <div class="flex space-x-4 mt-4">
               <button
                 class={`flex-1 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer ${
                   loading() ? 'opacity-50 cursor-not-allowed' : ''
